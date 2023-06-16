@@ -57,3 +57,7 @@ group :test do
   gem 'shoulda-matchers', '~> 5.3'
   gem 'simplecov', '~> 0.22.0', require: false
 end
+
+gem "bundle-audit", "~> 0.1.0"
+
+gem "rails_best_practices", "~> 1.23"

@@ -70,6 +70,13 @@ GEM
     bootsnap (1.16.0)
       msgpack (~> 1.2)
     builder (3.2.4)
+    bundle-audit (0.1.0)
+      bundler-audit
+    bundler-audit (0.9.1)
+      bundler (>= 1.2.0, < 3)
+      thor (~> 1.0)
+    code_analyzer (0.5.5)
+      sexp_processor
     concurrent-ruby (1.2.2)
     crass (1.0.6)
     database_cleaner-active_record (2.1.0)
@@ -83,6 +90,7 @@ GEM
     diff-lcs (1.5.0)
     docile (1.4.0)
     erubi (1.12.0)
+    erubis (2.7.0)
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.2.0)
@@ -154,6 +162,14 @@ GEM
     rails-html-sanitizer (1.6.0)
       loofah (~> 2.21)
       nokogiri (~> 1.14)
+    rails_best_practices (1.23.2)
+      activesupport
+      code_analyzer (~> 0.5.5)
+      erubis
+      i18n
+      json
+      require_all (~> 3.0)
+      ruby-progressbar
     railties (7.0.5)
       actionpack (= 7.0.5)
       activesupport (= 7.0.5)
@@ -166,6 +182,7 @@ GEM
     regexp_parser (2.8.0)
     reline (0.3.5)
       io-console (~> 0.5)
+    require_all (3.0.0)
     rexml (3.2.5)
     rspec-core (3.12.2)
       rspec-support (~> 3.12.0)
@@ -201,6 +218,7 @@ GEM
       rack (>= 1.1)
       rubocop (>= 1.33.0, < 2.0)
     ruby-progressbar (1.13.0)
+    sexp_processor (4.17.0)
     shoulda-matchers (5.3.0)
       activesupport (>= 5.2.0)
     simplecov (0.22.0)
@@ -224,6 +242,7 @@ PLATFORMS
 
 DEPENDENCIES
   bootsnap
+  bundle-audit (~> 0.1.0)
   database_cleaner-active_record (~> 2.1)
   debug
   factory_bot_rails (~> 6.2)
@@ -231,6 +250,7 @@ DEPENDENCIES
   pg (~> 1.1)
   puma (~> 5.0)
   rails (~> 7.0.4, >= 7.0.4.3)
+  rails_best_practices (~> 1.23)
   rspec-rails (~> 6.0)
   rubocop-rails (~> 2.19)
   shoulda-matchers (~> 5.3)
