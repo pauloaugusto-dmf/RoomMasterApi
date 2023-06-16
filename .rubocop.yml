@@ -1,0 +1,51 @@
+require: rubocop-rails
+
+Style/Documentation:
+  Enabled: false
+
+Rails/HasAndBelongsToMany:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Rails/FilePath:
+  Enabled: false
+
+Lint/MissingSuper:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'lib/tasks/*'
+    - 'spec/**/*'
+    - 'db/migrate/*'
+
+Layout/LineLength:
+  Exclude:
+    - 'spec/**/*'
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+
+Metrics/MethodLength:
+  Exclude:
+    - 'db/migrate/*'
+    - 'spec/**/*'
+
+Metrics/LineLength:
+  Max: 120
+
+AllCops:
+  TargetRubyVersion: 3.0
+  NewCops: enable
+  Exclude:
+    - 'db/migrate/*'
+    - 'db/schema.rb'
+    - 'config/initializers/active_record_enum.rb'
+    - 'lib/cancancan_custom/lib/cancan/ability/rules.rb'
+    - 'bin/*'
+    - 'vendor/bundle/**/*'
