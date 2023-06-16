@@ -52,6 +52,7 @@ end
 group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
+  gem 'annotate', '~> 3.2'
   gem 'bundle-audit', '~> 0.1.0'
   gem 'rails_best_practices', '~> 1.23'
   gem 'rubocop-rails', '~> 2.19', require: false
