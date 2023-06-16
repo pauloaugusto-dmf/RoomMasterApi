@@ -24,7 +24,10 @@ gem 'puma', '~> 5.0'
 # gem "kredis"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-# gem "bcrypt", "~> 3.1.7"
+gem 'bcrypt', '~> 3.1.7'
+
+# The JWT gem is a Ruby library for creating and verifying JSON Web Tokens (JWTs).
+gem 'jwt', '~> 2.7'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
@@ -49,6 +52,8 @@ end
 group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
+  gem 'bundle-audit', '~> 0.1.0'
+  gem 'rails_best_practices', '~> 1.23'
   gem 'rubocop-rails', '~> 2.19', require: false
 end
 
@@ -57,7 +62,3 @@ group :test do
   gem 'shoulda-matchers', '~> 5.3'
   gem 'simplecov', '~> 0.22.0', require: false
 end
-
-gem 'bundle-audit', '~> 0.1.0'
-
-gem 'rails_best_practices', '~> 1.23'
