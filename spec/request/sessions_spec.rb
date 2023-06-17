@@ -34,4 +34,34 @@ RSpec.describe '/sessions', type: :request do
       end
     end
   end
+
+  describe 'POST #logout' do
+    context 'when token is valid' do
+      it 'revokes the token and returns a success message' do
+        delete '/api/v1/logout', headers: authenticate_headers(user)
+
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body).to eq({ 'message' => 'Logout successful' })
+      end
+    end
+
+    context 'when token is invalid' do
+      token = nil
+
+      it 'returns an error message' do
+        delete '/api/v1/logout', headers: {
+          'Accept' => 'application/json',
+          'Content-Type' => 'application/json',
+          'Authorization' => "Bearer #{token}"
+        }
+
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(body['error']).to eq('Invalid token')
+      end
+    end
+  end
 end

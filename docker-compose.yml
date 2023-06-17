@@ -1,11 +1,17 @@
 version: "3"
 services:
   db:
-    image: postgres:13
+    image: postgres:15
     volumes:
-      - ./tmp/db:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: password
+  
+  redis:
+    image: redis
+    volumes:
+      - redis_data:/data
+
   web:
     build: .
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
@@ -17,3 +23,8 @@ services:
       - "3000:3000"
     depends_on:
       - db
+      - redis
+
+volumes:
+  pg_data:
+  redis_data:

@@ -33,3 +33,6 @@
 
 # Rails Best Practices
 rails_best_practices_output.html
+
+# Env
+.env

@@ -3,7 +3,7 @@ module Authenticable
 
   def authenticate_user
     token = extract_token(request)
-    if token && valid_token?(token)
+    if token && valid_token?(token) && !token_blacklisted?(token)
       decoded_token = decode_token(token)
       user_id = decoded_token['user_id']
       @current_user = User.find(user_id)
@@ -24,5 +24,9 @@ module Authenticable
 
   def decode_token(token)
     Jwt::Decode.call(token)
+  end
+
+  def token_blacklisted?(token)
+    Jwt::Blacklist::TokenRevoked.call(token)
   end
 end
