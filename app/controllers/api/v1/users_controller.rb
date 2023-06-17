@@ -1,6 +1,16 @@
 module Api
   module V1
     class UsersController < ApplicationController
+      before_action :authenticate_user, only: [:show]
+
+      def show
+        if @current_user.id == params[:id].to_i
+          render json: @current_user
+        else
+          render json: { error: 'unauthorized access' }, status: :unauthorized
+        end
+      end
+
       def create
         user = User.new(user_params)
 

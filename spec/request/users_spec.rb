@@ -2,6 +2,43 @@ require 'rails_helper'
 
 RSpec.describe '/users', type: :request do
   let(:user) { build :user }
+  let(:current_user1) { create :user }
+  let(:current_user2) { create :user }
+
+  describe 'GET #show' do
+    context 'when user is authenticated and accessing own information' do
+      before do
+        get "/api/v1/users/#{current_user1.id}", headers: authenticate_headers(current_user1)
+      end
+
+      it 'returns the user information' do
+        expect(response).to have_http_status(:success)
+        expect(response.body).to eq(current_user1.to_json)
+      end
+    end
+
+    context 'when user is authenticated but accessing other user information' do
+      before do
+        get "/api/v1/users/#{current_user1.id}", headers: authenticate_headers(current_user2)
+      end
+
+      it 'returns unauthorized error' do
+        expect(response).to have_http_status(:unauthorized)
+        expect(response.body).to eq({ error: 'unauthorized access' }.to_json)
+      end
+    end
+
+    context 'when user is not authenticated' do
+      before do
+        get "/api/v1/users/#{current_user1.id}", headers: headers_json, as: :json
+      end
+
+      it 'returns unauthorized error' do
+        expect(response).to have_http_status(:unauthorized)
+        expect(response.body).to eq({ error: 'invalid or expired authentication token' }.to_json)
+      end
+    end
+  end
 
   describe 'POST #create' do
     context 'with valid parameters' do
@@ -17,6 +54,7 @@ RSpec.describe '/users', type: :request do
 
       it 'returns a success response with token' do
         post '/api/v1/users', params: { user: valid_params }, headers: headers_json, as: :json
+
         expect(response).to have_http_status(:created)
         expect(response.body).to include('token')
       end

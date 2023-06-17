@@ -6,9 +6,9 @@ module Authenticable
     if token && valid_token?(token)
       decoded_token = decode_token(token)
       user_id = decoded_token['user_id']
-      User.find(user_id)
+      @current_user = User.find(user_id)
     else
-      render json: { error: 'Invalid or expired authentication token' }, status: :unauthorized
+      render json: { error: 'invalid or expired authentication token' }, status: :unauthorized
     end
   end
 
@@ -23,6 +23,6 @@ module Authenticable
   end
 
   def decode_token(token)
-    Jwt.Decode.call(token)
+    Jwt::Decode.call(token)
   end
 end
