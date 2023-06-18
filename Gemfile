@@ -60,7 +60,9 @@ group :development do
 end
 
 group :test do
+  gem 'database_cleaner', '~> 2.0'
   gem 'database_cleaner-active_record', '~> 2.1'
+  gem 'database_cleaner-redis', '~> 2.0'
   gem 'shoulda-matchers', '~> 5.3'
   gem 'simplecov', '~> 0.22.0', require: false
 end

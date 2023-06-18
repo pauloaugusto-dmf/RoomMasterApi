@@ -14,7 +14,7 @@ RSpec.describe '/sessions', type: :request do
 
         expect(response).to have_http_status(:success)
 
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['token']).not_to be_nil
       end
     end
@@ -29,7 +29,7 @@ RSpec.describe '/sessions', type: :request do
 
         expect(response).to have_http_status(:unauthorized)
 
-        body = JSON.parse(response.body)
+        body = response.parsed_body
         expect(body['error']).to eq('Invalid credentials')
       end
     end
@@ -40,7 +40,7 @@ RSpec.describe '/sessions', type: :request do
       it 'revokes the token and returns a success message' do
         delete '/api/v1/logout', headers: authenticate_headers(user)
 
-        body = JSON.parse(response.body)
+        body = response.parsed_body
 
         expect(response).to have_http_status(:ok)
         expect(body).to eq({ 'message' => 'Logout successful' })
@@ -57,7 +57,7 @@ RSpec.describe '/sessions', type: :request do
           'Authorization' => "Bearer #{token}"
         }
 
-        body = JSON.parse(response.body)
+        body = response.parsed_body
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(body['error']).to eq('Invalid token')
