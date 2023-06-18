@@ -2,6 +2,7 @@ module Api
   module V1
     class RoomsController < ApplicationController
       before_action :authenticate_user
+      before_action :authorizable_admin_user, only: %i[create update destroy]
       before_action :set_room, only: %i[show update destroy]
 
       def index

@@ -1,7 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe '/rooms', type: :request do
+  let(:role_admin) { create :role, :admin }
   let(:user) { create :user }
+  let(:user_admin) { create :user, role: role_admin }
   let(:room) { create :room }
 
   describe 'GET /index' do
@@ -80,7 +82,7 @@ RSpec.describe '/rooms', type: :request do
       end
 
       before do
-        post '/api/v1/rooms', params: { room: valid_params }, headers: authenticate_headers(user), as: :json
+        post '/api/v1/rooms', params: { room: valid_params }, headers: authenticate_headers(user_admin), as: :json
       end
 
       it 'returns a success response' do
@@ -93,7 +95,7 @@ RSpec.describe '/rooms', type: :request do
 
       it 'creates a new room' do
         expect do
-          post '/api/v1/rooms', params: { room: valid_params }, headers: authenticate_headers(user), as: :json
+          post '/api/v1/rooms', params: { room: valid_params }, headers: authenticate_headers(user_admin), as: :json
         end.to change(Room, :count).by(1)
       end
     end
@@ -104,7 +106,7 @@ RSpec.describe '/rooms', type: :request do
       end
 
       before do
-        post '/api/v1/rooms', params: { room: invalid_params }, headers: authenticate_headers(user), as: :json
+        post '/api/v1/rooms', params: { room: invalid_params }, headers: authenticate_headers(user_admin), as: :json
       end
 
       it 'returns 422, unprocessable entity' do
@@ -117,7 +119,55 @@ RSpec.describe '/rooms', type: :request do
 
       it 'does not create a new user' do
         expect do
-          post '/api/v1/rooms', params: { room: invalid_params }, headers: authenticate_headers(user), as: :json
+          post '/api/v1/rooms', params: { room: invalid_params }, headers: authenticate_headers(user_admin), as: :json
+        end.not_to change(Room, :count)
+      end
+    end
+
+    context 'with unauthenticated user' do
+      let(:valid_params) do
+        { name: room.name, capacity: room.capacity }
+      end
+
+      before do
+        post '/api/v1/rooms', params: { room: valid_params }, headers: headers_json, as: :json
+      end
+
+      it 'returns 401, unauthorized' do
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      it 'returns error messager' do
+        expect(response.body).to include('error')
+      end
+
+      it 'does not create a new user' do
+        expect do
+          post '/api/v1/rooms', params: { room: valid_params }, headers: headers_json, as: :json
+        end.not_to change(Room, :count)
+      end
+    end
+
+    context 'with unauthorized user' do
+      let(:valid_params) do
+        { name: room.name, capacity: room.capacity }
+      end
+
+      before do
+        post '/api/v1/rooms', params: { room: valid_params }, headers: authenticate_headers(user), as: :json
+      end
+
+      it 'returns 403, forbidden' do
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'returns error messager' do
+        expect(response.body).to include('error')
+      end
+
+      it 'does not create a new user' do
+        expect do
+          post '/api/v1/rooms', params: { room: valid_params }, headers: authenticate_headers(user), as: :json
         end.not_to change(Room, :count)
       end
     end
@@ -126,7 +176,8 @@ RSpec.describe '/rooms', type: :request do
   describe 'PUT #update' do
     context 'with valid parameters' do
       before do
-        put "/api/v1/rooms/#{room.id}", params: { room: { name: 'other name' } }, headers: authenticate_headers(user),
+        put "/api/v1/rooms/#{room.id}", params: { room: { name: 'other name' } },
+                                        headers: authenticate_headers(user_admin),
                                         as: :json
         room.reload
       end
@@ -148,7 +199,8 @@ RSpec.describe '/rooms', type: :request do
       let(:original_name) { room.name }
 
       before do
-        put "/api/v1/rooms/#{room.id}", params: { room: { name: '' } }, headers: authenticate_headers(user), as: :json
+        put "/api/v1/rooms/#{room.id}", params: { room: { name: '' } }, headers: authenticate_headers(user_admin),
+                                        as: :json
         room.reload
       end
 
@@ -160,7 +212,50 @@ RSpec.describe '/rooms', type: :request do
         expect(response.body).to include('errors')
       end
 
-      it 'not change the name' do
+      it 'does not change the name' do
+        expect(room.name).to eq(original_name)
+      end
+    end
+
+    context 'with unauthenticated user' do
+      let(:original_name) { room.name }
+
+      before do
+        put "/api/v1/rooms/#{room.id}", params: { room: { name: 'other name' } }, headers: headers_json, as: :json
+        room.reload
+      end
+
+      it 'returns 401, unauthorized' do
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      it 'returns error messager' do
+        expect(response.body).to include('error')
+      end
+
+      it 'does not change the name' do
+        expect(room.name).to eq(original_name)
+      end
+    end
+
+    context 'with unauthorized user' do
+      let(:original_name) { room.name }
+
+      before do
+        put "/api/v1/rooms/#{room.id}", params: { room: { name: 'other name' } }, headers: authenticate_headers(user),
+                                        as: :json
+        room.reload
+      end
+
+      it 'returns 403, forbidden' do
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'returns error messager' do
+        expect(response.body).to include('error')
+      end
+
+      it 'does not change the name' do
         expect(room.name).to eq(original_name)
       end
     end
@@ -169,7 +264,7 @@ RSpec.describe '/rooms', type: :request do
   describe 'DELETE #destroy' do
     context 'with valid parameters' do
       before do
-        delete "/api/v1/rooms/#{room.id}", headers: authenticate_headers(user), as: :json
+        delete "/api/v1/rooms/#{room.id}", headers: authenticate_headers(user_admin), as: :json
       end
       it 'renders a successful response' do
         expect(response).to be_successful
@@ -179,8 +274,44 @@ RSpec.describe '/rooms', type: :request do
         expect(response.status).to eq(204)
       end
 
-      it 'destroys the requested transaction' do
+      it 'destroys the room' do
         expect(Room.count).to eq(0)
+      end
+    end
+
+    context 'with unauthenticated user' do
+      before do
+        delete "/api/v1/rooms/#{room.id}", headers: headers_json, as: :json
+      end
+
+      it 'returns 401, unauthorized' do
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      it 'returns error messager' do
+        expect(response.body).to include('error')
+      end
+
+      it 'does not destroys the room' do
+        expect(Room.count).to eq(1)
+      end
+    end
+
+    context 'with unauthorized user' do
+      before do
+        delete "/api/v1/rooms/#{room.id}", headers: authenticate_headers(user), as: :json
+      end
+
+      it 'returns 403, forbidden' do
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'returns error messager' do
+        expect(response.body).to include('error')
+      end
+
+      it 'does not destroys the room' do
+        expect(Room.count).to eq(1)
       end
     end
   end
