@@ -4,6 +4,7 @@ RSpec.describe '/users', type: :request do
   let(:user) { build :user }
   let(:current_user1) { create :user }
   let(:current_user2) { create :user }
+  let(:role) { create :role }
 
   describe 'GET #show' do
     context 'when user is authenticated and accessing own information' do
@@ -43,7 +44,7 @@ RSpec.describe '/users', type: :request do
   describe 'POST #create' do
     context 'with valid parameters' do
       let(:valid_params) do
-        { name: user.name, email: user.email, password: user.password }
+        { name: user.name, email: user.email, password: user.password, role_id: role.id }
       end
 
       it 'creates a new user' do
