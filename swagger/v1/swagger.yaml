@@ -1,0 +1,354 @@
+openapi: 3.0.3
+info:
+  title: RoomMasterAPI
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/v1/users/{user_id}:
+    get:
+      tags:
+        - Users
+      summary: Get information from a user
+      parameters:
+        - name: idID do usuário
+          in: path
+          required: true
+          type: integer
+          description: User ID
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              email:
+                type: string
+        401:
+          description: Unauthorized access
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /api/v1/users:
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      parameters:
+        - name: user
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+          description: New user data
+      responses:
+        201:
+          description: User created successfully
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+        422:
+          description: Validation errors
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: string
+
+  /api/v1/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login
+      description: Authenticate user and generate JWT token.
+      parameters:
+        - in: body
+          name: user
+          description: User credentials
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: user@example.com
+              password:
+                type: string
+                example: password123
+      responses:
+        '200':
+          description: Successful login
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxMjM0NTY3ODkifQ.4kEbXUPl5zyy2xEmTlEB0oC2sCzVp7FFnJDI4Y1nIvA
+        '401':
+          description: Unauthorized access
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Invalid credentials
+
+  /api/v1/logout:
+    delete:
+      tags:
+        - Authentication
+      summary: Logout
+      description: Revoke JWT token for user's logout.
+      responses:
+        '200':
+          description: Successful logout
+          schema:
+            type: object
+          properties:
+            message:
+              type: string
+              example: Logout successful
+        '422':
+          description: Invalid token
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Invalid token
+
+  /api/v1/rooms:
+    get:
+      tags:
+        - Rooms
+      summary: List rooms
+      description: Retrieve a list of all rooms.
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Room'
+    post:
+      tags:
+        - Rooms
+      summary: Create a room
+      description: Create a new room.
+      parameters:
+        - in: body
+          name: room
+          description: Room object to be created
+          required: true
+          schema:
+            $ref: '#/definitions/RoomInput'
+      responses:
+        '201':
+          description: Room created successfully
+          schema:
+            $ref: '#/definitions/Room'
+        '422':
+          description: Unprocessable entity
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: string
+
+  /api/v1/rooms/{id}:
+    get:
+      tags:
+        - Rooms
+      summary: Get a room
+      description: Retrieve a specific room by ID.
+      parameters:
+        - in: path
+          name: id
+          description: Room ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Room'
+    put:
+      tags:
+        - Rooms
+      summary: Update a room
+      description: Update an existing room.
+      parameters:
+        - in: path
+          name: id
+          description: Room ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: body
+          name: room
+          description: Updated room object
+          required: true
+          schema:
+            $ref: '#/definitions/RoomInput'
+      responses:
+        '200':
+          description: Room updated successfully
+          schema:
+            $ref: '#/definitions/Room'
+        '422':
+          description: Unprocessable entity
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: string
+    delete:
+      tags:
+        - Rooms
+      summary: Delete a room
+      description: Delete a specific room by ID.
+      parameters:
+        - in: path
+          name: id
+          description: Room ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Room deleted successfully
+    
+  /api/v1/reservations:
+    get:
+      tags:
+        - Reservations
+      summary: List reservations
+      description: Retrieve a list of reservations for the current user.
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Reservation'
+    post:
+      tags:
+        - Reservations
+      summary: Create a reservation
+      description: Create a new reservation for the current user.
+      parameters:
+        - in: body
+          name: reservation
+          description: Reservation object to be created
+          required: true
+          schema:
+            $ref: '#/definitions/ReservationInput'
+      responses:
+        '201':
+          description: Reservation created successfully
+          schema:
+            $ref: '#/definitions/Reservation'
+        '422':
+          description: Unprocessable entity
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: string
+
+  /api/v1/reservations/{id}:
+    get:
+      tags:
+        - Reservations
+      summary: Get a reservation
+      description: Retrieve a specific reservation by ID.
+      parameters:
+        - in: path
+          name: id
+          description: Reservation ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Reservation'
+    put:
+      tags:
+        - Reservations
+      summary: Update a reservation
+      description: Update an existing reservation.
+      parameters:
+        - in: path
+          name: id
+          description: Reservation ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: body
+          name: reservation
+          description: Updated reservation object
+          required: true
+          schema:
+            $ref: '#/definitions/ReservationInput'
+      responses:
+        '200':
+          description: Reservation updated successfully
+          schema:
+            $ref: '#/definitions/Reservation'
+        '422':
+          description: Unprocessable entity
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: string
+    delete:
+      tags:
+        - Reservations
+      summary: Delete a reservation
+      description: Delete a specific reservation by ID.
+      parameters:
+        - in: path
+          name: id
+          description: Reservation ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Reservation deleted successfully
