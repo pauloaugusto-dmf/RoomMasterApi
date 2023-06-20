@@ -10,7 +10,7 @@
 #
 FactoryBot.define do
   factory :room do
-    name { 'MyString' }
+    name { Faker::Name.initials }
     capacity { 1 }
   end
 end

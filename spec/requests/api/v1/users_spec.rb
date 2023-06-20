@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe '/users', type: :request do
+RSpec.describe 'Api::V1::Users', type: :request do
   let(:user) { build :user }
   let(:current_user1) { create :user }
   let(:current_user2) { create :user }

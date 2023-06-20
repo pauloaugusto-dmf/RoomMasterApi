@@ -9,6 +9,8 @@
 #  updated_at :datetime         not null
 #
 class Room < ApplicationRecord
+  has_many :reservations, dependent: :destroy
+
   with_options presence: true do
     validates :capacity
     validates :name

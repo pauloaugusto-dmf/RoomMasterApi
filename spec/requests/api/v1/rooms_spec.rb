@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe '/rooms', type: :request do
+RSpec.describe 'Api::V1::Rooms', type: :request do
   let(:role_admin) { create :role, :admin }
   let(:user) { create :user }
   let(:user_admin) { create :user, role: role_admin }

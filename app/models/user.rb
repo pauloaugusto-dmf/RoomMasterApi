@@ -24,6 +24,8 @@ class User < ApplicationRecord
 
   belongs_to :role
 
+  has_many :reservations, dependent: :destroy
+
   validates :name, presence: true, length: { maximum: 50 }
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, presence: true, length: { minimum: 6 }, if: :password_required?

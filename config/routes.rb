@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :users
       resources :rooms
+      resources :reservations
       post '/login', to: 'sessions#create'
       delete '/logout', to: 'sessions#destroy'
     end

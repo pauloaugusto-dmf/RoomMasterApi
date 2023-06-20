@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe '/sessions', type: :request do
+RSpec.describe 'Api::V1::Sessions', type: :request do
   let(:user) { create :user, password: 'password' }
 
   describe 'POST #create' do
