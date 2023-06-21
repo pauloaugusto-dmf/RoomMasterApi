@@ -28,4 +28,20 @@ class Reservation < ApplicationRecord
     validates :start_time
     validates :end_time
   end
+
+  validate :validate_start_time, :validate_end_time
+
+  private
+
+  def validate_start_time
+    if start_time.present? && start_time < Time.current
+      errors.add(:start_time, "cannot be in the past")
+    end
+  end
+
+  def validate_end_time
+    if start_time.present? && end_time.present? && end_time <= start_time
+      errors.add(:end_time, "must be greater than start time")
+    end
+  end
 end

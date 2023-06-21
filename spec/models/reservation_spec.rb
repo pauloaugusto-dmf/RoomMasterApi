@@ -24,6 +24,8 @@ require 'rails_helper'
 
 RSpec.describe Reservation, type: :model do
   describe 'validations' do
+    let(:reservation) { build(:reservation) }
+
     describe 'associations' do
       it { expect(belong_to(:room)) }
       it { expect(belong_to(:user)) }
@@ -32,6 +34,35 @@ RSpec.describe Reservation, type: :model do
     describe 'presence of' do
       it { should validate_presence_of(:start_time) }
       it { should validate_presence_of(:end_time) }
+    end
+
+    context 'when start_time is in the past' do
+      it 'is not valid' do
+        reservation.start_time = 1.day.ago
+        expect(reservation).not_to be_valid
+        expect(reservation.errors[:start_time]).to include("cannot be in the past")
+      end
+    end
+
+    context 'when end_time is less than or equal to start_time' do
+      it 'is not valid' do
+        reservation.start_time = Time.current + 1.hour
+        reservation.end_time = reservation.start_time
+        expect(reservation).not_to be_valid
+        expect(reservation.errors[:end_time]).to include("must be greater than start time")
+
+        reservation.end_time = reservation.start_time - 1.hour
+        expect(reservation).not_to be_valid
+        expect(reservation.errors[:end_time]).to include("must be greater than start time")
+      end
+    end
+
+    context 'when start_time and end_time are valid' do
+      it 'is valid' do
+        reservation.start_time = Time.current + 1.hour
+        reservation.end_time = reservation.start_time + 2.hour
+        expect(reservation).to be_valid
+      end
     end
   end
 end
