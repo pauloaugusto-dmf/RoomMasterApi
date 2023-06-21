@@ -67,4 +67,7 @@ group :test do
   gem 'simplecov', '~> 0.22.0', require: false
 end
 
+gem 'ransack', '~> 4.0'
 gem 'rswag', '~> 2.9'
+
+gem 'kaminari', '~> 1.2'

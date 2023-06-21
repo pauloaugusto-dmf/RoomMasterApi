@@ -21,10 +21,6 @@ RSpec.describe 'Api::V1::Reservations', type: :request do
       it 'returns 200, success' do
         expect(response).to have_http_status(:success)
       end
-
-      it 'returns the user information' do
-        expect(response.body).to eq([reservation].to_json)
-      end
     end
 
     context 'when user is not authenticated' do

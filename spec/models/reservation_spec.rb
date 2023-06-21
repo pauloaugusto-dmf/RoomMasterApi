@@ -40,27 +40,27 @@ RSpec.describe Reservation, type: :model do
       it 'is not valid' do
         reservation.start_time = 1.day.ago
         expect(reservation).not_to be_valid
-        expect(reservation.errors[:start_time]).to include("cannot be in the past")
+        expect(reservation.errors[:start_time]).to include('cannot be in the past')
       end
     end
 
     context 'when end_time is less than or equal to start_time' do
       it 'is not valid' do
-        reservation.start_time = Time.current + 1.hour
+        reservation.start_time = 1.hour.from_now
         reservation.end_time = reservation.start_time
         expect(reservation).not_to be_valid
-        expect(reservation.errors[:end_time]).to include("must be greater than start time")
+        expect(reservation.errors[:end_time]).to include('must be greater than start time')
 
         reservation.end_time = reservation.start_time - 1.hour
         expect(reservation).not_to be_valid
-        expect(reservation.errors[:end_time]).to include("must be greater than start time")
+        expect(reservation.errors[:end_time]).to include('must be greater than start time')
       end
     end
 
     context 'when start_time and end_time are valid' do
       it 'is valid' do
-        reservation.start_time = Time.current + 1.hour
-        reservation.end_time = reservation.start_time + 2.hour
+        reservation.start_time = 1.hour.from_now
+        reservation.end_time = reservation.start_time + 2.hours
         expect(reservation).to be_valid
       end
     end

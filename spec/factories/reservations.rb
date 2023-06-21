@@ -24,7 +24,7 @@ FactoryBot.define do
   factory :reservation do
     user { association(:user) }
     room { association(:room) }
-    start_time { Time.current + 1.hour }
-    end_time { Time.current + 2.hour }
+    start_time { 1.hour.from_now }
+    end_time { 2.hours.from_now }
   end
 end

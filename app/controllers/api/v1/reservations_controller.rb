@@ -6,7 +6,12 @@ module Api
 
       def index
         @reservations = @current_user.reservations.all
-        render json: @reservations, status: :ok
+          .ransack(params[:q])
+          .result(distinct: true)
+          .page(params[:page])
+          .per(params[:page_size])
+
+        render json: ReservationsSerializer.collection_as_json(@reservations)
       end
 
       def show
